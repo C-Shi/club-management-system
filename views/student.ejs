@@ -1,0 +1,183 @@
+<% include ./partial/header %>
+
+<h1>&nbsp</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <!-- display student basic info -->
+      <div class="card">
+        <img class="card-img-top" src="https://thestampedenews.org/wp-content/uploads/2017/09/JVfootball.png" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title"><%= student.name.first %> <%= student.name.last%></h5>
+          <p><strong>School:</strong> <%= student.school%></p>
+          <p><strong>Grade:</strong> <%= student.grade%></p>
+          <p><strong>Height:</strong> <%= student.height.feet%>'<%= student.height.inches %></p>
+          <p><strong>Weight:</strong> <%= student.weight%> lb</p>
+          <p><strong>Position:</strong> <%= student.position%></p>
+          <p><strong>Arm Span:</strong> <%= student.armSpan%></p>
+          <p><strong>Bench Press:</strong> <%= student.benchPress%></p>
+          <p><strong>Broad</strong> <%= student.broad%></p>
+          <p><strong>Vertical:</strong> <%= student.vertical%></p>
+          <p><strong>40:1st:</strong> <%= student.forty.first%></p>
+          <p><strong>40:2nd:</strong> <%= student.forty.second%></p>
+          <p><strong>Shuttle:1st L:</strong> <%= student.shuttle.firstL%></p>
+          <p><strong>Shuttle:2nd R:</strong> <%= student.shuttle.secondR%></p>
+
+          <% if(currentUser && currentUser.isCoach){ %>
+            <a href="/student/<%= student._id%>/edit" class="btn btn-sm btn-warning">Edit</a>
+            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteProfile">
+              Delete
+            </button>
+          <% } %>
+        </div>
+        <!-- -------------------------------------- -->
+      </div>
+    </div>
+
+
+    <div class="col-md-8">
+      <!-- Strengths -->
+      <div class="card">
+        <h5 class="card-header">Strengths
+          <% if(currentUser && currentUser.isCoach){ %>
+            <a href="#" data-toggle="modal" data-target="#editStrength" style="float:right">EDIT</a>
+          <% } %>
+        </h5>
+
+        <!-- Modal for editing strength --------------------------- -->
+            <div class="modal fade" id="editStrength" tabindex="-1" role="dialog" aria-labelledby="editStrengthTitle" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editStrengthTitle">Edit student's strength</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/student/<%= student._id%>/strength?_method=PUT" method="post">
+                      <textarea class="form-control" name="strength"><%= student.strength%></textarea>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary">Save changes</button>
+                      </div>
+
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          <!-- ------------------------------------------------------------ -->
+
+        <div class="card-body">
+          <p><%= student.strength %></p>
+        </div>
+      </div>
+      <!-- weakness  -->
+      <div class="card">
+        <h5 class="card-header">Weakness
+          <% if(currentUser && currentUser.isCoach){ %>
+            <a href="#" data-toggle="modal" data-target="#editWeakness" style="float:right">EDIT</a>
+          <% } %>
+        </h5>
+
+        <!-- Modal for editing weakness --------------------------- -->
+          <div class="modal fade" id="editWeakness" tabindex="-1" role="dialog" aria-labelledby="eidtWeaknessTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editWeaknessTitle">Edit student's weakness</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/student/<%= student._id%>/weakness?_method=PUT" method="post">
+                    <textarea class="form-control" name="weakness"><%= student.weakness%></textarea>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button class="btn btn-primary">Save changes</button>
+                    </div>
+
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        <!-- ------------------------------------------------------------ -->
+
+        <div class="card-body">
+          <p><%= student.weakness %></p>
+        </div>
+    </div>
+
+      <!-- coach comments -->
+      <!-- this section is excusively for adding a comment, including all the toggle section ************************* -->
+      <div class="card">
+        <h5 class="card-header">Coach comments <a href="#" id="addCommentButton" style="float:right">
+            <i class="fas fa-plus"></i>Add Comment</a>
+        </h5>
+        <div class="card-body">
+          <% student.comment.forEach(function(comment){ %>
+              <div style="margin-bottom: 5px"><%= comment.text %>
+                 <% if(currentUser && currentUser.isCoach){ %>
+                  <form action="/student/<%= student._id%>/comment/<%= comment._id%>?_method=DELETE" method="POST" style="display:inline; float:right"><button class="badge badge-dark">Delete</button></form>
+                 <% } %>
+              </div>
+          <% }) %>
+          <!-- this is a form of adding a comment to this student -->
+          <form action="/student/<%= student._id %>/comment" method='POST' id="commentSection" style="display:none">
+            <script>
+             $('#addCommentButton').click(function(){
+              $('#commentSection').slideToggle()
+             })
+            </script>
+            <textarea placeholder="Add a comment to this student" rows="4" class="form-control" id="commentText" name="comment[text]"></textarea>
+            <p></p>
+            <button class="btn btn-sm btn-success">Add</button>
+            <button type="button" id="clearComment" class="btn btn-sm btn-secondary">Clear</a>
+            <script>
+              var clear = document.getElementById('clearComment');
+              var comment = document.getElementById('commentText');
+              clear.addEventListener("click", function(){
+                comment.value = "";
+              })
+            </script>
+          </form>
+
+          <!-- *********************************************** -->
+        </div>
+      </div>
+      <!-- **************************************************************************************************************** -->
+
+    </div>
+  </div>
+
+  <!-- Modal -->
+    <div class="modal fade" id="deleteProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Do you want to delete this profile ?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            WARNING: You Are About To Delete A Student Profile. This Action Cannot Be Undo
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <!-- form to delete student profile -->
+              <form action="/student/<%= student._id%>?_method=DELETE" method="POST">
+                  <button class="btn btn-danger">Delete</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+<% include ./partial/footer %>

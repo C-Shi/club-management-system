@@ -1,0 +1,20 @@
+<% include ./partial/header %>
+
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Football Club Student Profiling System</h1>
+    <p class="lead">Intended to help you manage a better club</p>
+  </div>
+</div>
+
+<div class="container">
+    <form action="/student" method="GET">
+      <div class="form-group">
+        <input class="form-control" name="search" placeholder="Search for a student by name">
+      </div>
+      <button class="btn btn-outline-primary btn-block"><i class="fas fa-search"></i>Search</button>
+    </form>
+</div>
+
+
+<% include ./partial/footer %>

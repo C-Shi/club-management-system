@@ -1,0 +1,78 @@
+<% include ./partial/header %>
+
+<div class="container">
+    <form action="/register" method="post" id="myForm">
+      <div class="form-group">
+        <label for="register">Username</label>
+        <input type="text" class="form-control" id="register" aria-describedby="emailHelp" placeholder="Enter Username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="passpord">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
+      </div>
+
+      <div class="form-group">
+        <label for="passpord2">Please re-enter password</label>
+        <input type="password" class="form-control" id="password2" placeholder="Re Enter Password" required>
+        <small id="help" class="form-text text-muted" style="display:none">Password does not match</small>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" id="Email" aria-describedby="emailHelp" placeholder="eg: yourmail@email.com" name="email" required>
+        <small id="help" class="form-text text-muted">You need to verify your email in case you forget your password</small>
+      </div>
+
+      <!-- identify what type of user do you want to create -->
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="true" id="defaultCheck1" name="admin">
+        <label class="form-check-label" for="defaultCheck1">
+          This user is an adminstrator
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="true" id="defaultCheck2" name="coach">
+        <label class="form-check-label" for="defaultCheck2">
+          This user is a coach
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id='submit'>Register this User</button>
+      <script>
+          var password = document.getElementById('password');
+          var password2 = document.getElementById('password2');
+          password.addEventListener('input', function(){
+            if(password.value && password.value !== password2.value){
+                document.getElementById('help').style.display = 'block';
+            }
+          })
+
+          password2.addEventListener('input', function(){
+            if(password.value && password.value !== password2.value){
+                document.getElementById('help').style.display = 'block';
+            }
+          })
+
+          password.addEventListener('input', function(){
+            if(password.value === password2.value){
+                document.getElementById('help').style.display = 'none';
+            }
+          })
+
+          password2.addEventListener('input', function(){
+            if(password.value === password2.value){
+                document.getElementById('help').style.display = 'none';
+            }
+          })
+
+          var submit = document.getElementById('submit');
+          submit.addEventListener('click', function(){
+            if(password.value && password.value !== password2.value){
+                document.getElementById('myForm').reset();
+            }
+          })
+      </script>
+    </form>
+</div>
+
+<% include ./partial/footer %>
