@@ -161,7 +161,7 @@ router.post("/reset/:token", (req, res) => {
         service: "Gmail",
         auth: {
           user: "kyleshi82@gmail.com",
-          pass: "DA58778525"
+          pass: process.env.GMAILPW
         }
       });
       let mailOptions = {
