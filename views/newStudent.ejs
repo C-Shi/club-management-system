@@ -2,7 +2,7 @@
 
 <div class="container">
   <div class="row">
-    <form action="/student" method="POST">
+    <form action="/student" method="POST" enctype="multipart/form-data">
       <!-- 1st row for person name, school and grade -->
       <div class="row">
         <div class="form-group col">
@@ -33,12 +33,8 @@
       <!-- 2nd row for person height and weight -->
       <div class="row">
         <div class="form-group col">
-          <label>Height: feet</label>
-          <input type="number" name="feet" class="form-control">
-        </div>
-        <div class="form-group col">
-          <label>Height: inches</label>
-          <input type="number" name="inches" class="form-control">
+          <label>Height: </label>
+          <input type="text" name="height" class="form-control">
         </div>
         <div class="form-group col">
           <label>Weight</label>
@@ -97,15 +93,16 @@
         </div>
         <div class="form-group col">
           <label>Bench Press</label>
-          <input type="number" name="benchPress" class="form-control">
+          <input type="text" name="benchPress[first]" class="form-control">
+          <input type="text" name="benchPress[second]" class="form-control">
         </div>
         <div class="form-group col">
           <label>Broad</label>
-          <input type="number" name="broad" class="form-control">
+          <input type="text" name="broad" class="form-control">
         </div>
         <div class="form-group col">
           <label>Vertical</label>
-          <input type="number" name="vertical" class="form-control">
+          <input type="text" name="vertical" class="form-control">
         </div>
       </div>
 
@@ -113,19 +110,19 @@
       <div class="row">
         <div class="form-group col">
           <label>40: 1st</label>
-          <input type="number" name="fortyFirst" class="form-control">
+          <input type="number" name="fortyFirst" class="form-control" step="0.1">
         </div>
         <div class="form-group col">
           <label>A40: 2nd</label>
-          <input type="number" name="fortySecond" class="form-control">
+          <input type="number" name="fortySecond" class="form-control" step="0.1">
         </div>
         <div class="form-group col">
           <label>Shuttle: 1st L</label>
-          <input type="number" name="shuttleFirst" class="form-control">
+          <input type="number" name="shuttleFirst" class="form-control" step="0.1">
         </div>
         <div class="form-group col">
           <label>Shuttle: 2nd R</label>
-          <input type="number" name="shuttleSecond" class="form-control">
+          <input type="number" name="shuttleSecond" class="form-control" step="0.1">
         </div>
       </div>
 
@@ -144,9 +141,15 @@
         </div>
       </div>
 
+      <!-- upload student image -->
+      <div class="form-group">
+          <label for="image">Choose your favorate picture: </label>
+          <input type="file" id="image" name="image" accept="image/*">
+      </div>
+
       <!-- end of input -->
       <button class="btn btn-primary">Create Student Profile</button>
-      <a href="/player" class="btn btn-secondary">Go Back</a>
+      <a href="/student" class="btn btn-secondary">Go Back</a>
     </form>
   </div>
 </div>

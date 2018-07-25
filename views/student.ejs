@@ -6,16 +6,22 @@
     <div class="col-md-4">
       <!-- display student basic info -->
       <div class="card">
-        <img class="card-img-top" src="https://thestampedenews.org/wp-content/uploads/2017/09/JVfootball.png" alt="Card image cap">
+        <img class="card-img-top" src="<%= student.image%>" alt="Card image cap">
+        <a href="/student/<%= student._id%>/image" style="text-align: center">Edit Profile</a>
         <div class="card-body">
           <h5 class="card-title"><%= student.name.first %> <%= student.name.last%></h5>
           <p><strong>School:</strong> <%= student.school%></p>
           <p><strong>Grade:</strong> <%= student.grade%></p>
-          <p><strong>Height:</strong> <%= student.height.feet%>'<%= student.height.inches %></p>
+          <p><strong>Height:</strong> <%= student.height%></p>
           <p><strong>Weight:</strong> <%= student.weight%> lb</p>
           <p><strong>Position:</strong> <%= student.position%></p>
           <p><strong>Arm Span:</strong> <%= student.armSpan%></p>
-          <p><strong>Bench Press:</strong> <%= student.benchPress%></p>
+          <p><strong>Bench Press:</strong>
+            <ul class="stat-li">
+              <li><strong>First trial</strong>: <%= student.benchPress.first%> lb</li>
+              <li><strong>Second trial</strong>: <%= student.benchPress.second%> lb</li>
+            </ul>
+          </p>
           <p><strong>Broad</strong> <%= student.broad%></p>
           <p><strong>Vertical:</strong> <%= student.vertical%></p>
           <p><strong>40:1st:</strong> <%= student.forty.first%></p>

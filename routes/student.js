@@ -6,6 +6,30 @@ var student = require("../models/student"),
 
 var router  = express.Router();
 
+// config image upload to cloudinary **************************
+var multer = require('multer');
+var storage = multer.diskStorage({
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter})
+
+var cloudinary = require('cloudinary');
+cloudinary.config({
+  cloud_name: 'dhi1ngld5',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+// ******************************************************
+
 // show all student player as a list
 router.get('/student', (req,res) => {
   // add fluzzy search function ***************
@@ -37,7 +61,9 @@ router.get('/student/new', middlewareObj.isCoach, (req,res) => {
 })
 
 // post player profile to database
-router.post('/student', middlewareObj.isCoach, (req, res) => {
+router.post('/student', middlewareObj.isCoach, upload.single('image'), (req, res) => {
+   // upload student image will be done in a differnt fucntion inside this post route
+
    var studentProfile = {
         name: {
           first: req.body.first,
@@ -46,10 +72,7 @@ router.post('/student', middlewareObj.isCoach, (req, res) => {
         fullName: req.body.first + " " + req.body.last,
         school: req.body.school,
         grade: req.body.grade,
-        height: {
-          feet: req.body.feet,
-          inches: req.body.inches
-        },
+        height: req.body.height,
         weight: req.body.weight,
         armSpan: req.body.armSpan,
         benchPress: req.body.benchPress,
@@ -66,15 +89,28 @@ router.post('/student', middlewareObj.isCoach, (req, res) => {
         position: req.body.position,
         strength: req.body.strength,
         weakness: req.body.weakness
-      };
-  student.create(studentProfile, (err)=> {
-    if (err){
-      console.log(err)
-    }else{
-      console.log("create a student profile named " + req.body.first + " " + req.body.last)
-    }
-  })
-  res.redirect('/student')
+  };
+
+      var img = req.file ? req.file.path : "https://res.cloudinary.com/dhi1ngld5/image/upload/v1532544942/default_avatar.png"
+      cloudinary.uploader.upload(img, (result) =>  {
+        // add cloudinary url for the image to the campground object under image property
+        console.log(result);
+        req.body.image = result.secure_url;
+        req.body.imageId = result.public_id;
+        // plugin student's image to student Profile
+        studentProfile.image = req.body.image;
+        studentProfile.imageId = req.body.imageId;
+
+        student.create(studentProfile, (err, thisStudent)=> {
+          if (err){
+            req.flash('err', err.message)
+            return res.redirect('back')
+          }else{
+            console.log("create a student profile named " + req.body.first + " " + req.body.last);
+          }
+        })
+        res.redirect('/student');
+      });
 })
 
 
@@ -103,16 +139,13 @@ router.get('/student/:id/edit', middlewareObj.isCoach, (req, res) => {
 // update student's profile
 router.put('/student/:id', middlewareObj.isCoach, (req, res) => {
    var studentProfile = {
-        name:{
+        name: {
           first: req.body.first,
-          last: req.body.last
+          last: req.body.last,
         },
         school: req.body.school,
         grade: req.body.grade,
-        height: {
-          feet: req.body.feet,
-          inches: req.body.inches
-        },
+        height: req.body.height,
         weight: req.body.weight,
         armSpan: req.body.armSpan,
         benchPress: req.body.benchPress,
@@ -126,17 +159,62 @@ router.put('/student/:id', middlewareObj.isCoach, (req, res) => {
           firstL: req.body.shuttleFirst,
           secondR: req.body.shuttleSecond
         },
-        position: req.body.position
-      };
+  };
+  // locate the student we want to edit
   student.findByIdAndUpdate(req.params.id, studentProfile, (err, foundStudent) => {
     if(err){
-      console.log(err)
+      req.flash("error", err.message);
+      res.redirect("back");
     }else{
       console.log('updated');
     }
   })
-
   res.redirect('/student/' + req.params.id )
+})
+
+//edit student image profile
+router.get("/student/:id/image", middlewareObj.isCoach, (req, res) => {
+  student.findById(req.params.id, (err, foundStudent) => {
+    if(err){
+      req.flash("error", err.message);
+      res.redirect("back");
+    }else{
+      res.render("image", {student:foundStudent})
+    }
+  })
+})
+
+router.put("/student/:id/image", middlewareObj.isCoach, upload.single('image'), (req, res) => {
+  student.findById(req.params.id, (err, foundStudent) => {
+    if(err){
+      req.flash("error", err.message);
+      res.redirect("back")
+    }else{
+      cloudinary.v2.uploader.destroy(foundStudent.imageId, (err) => {
+        if(err){
+          req.flash("error", err.message)
+          return res.redirect("back")
+        }
+        var img;
+        if(req.file) {
+          img = req.file.path
+        }else {
+          img = "https://res.cloudinary.com/dhi1ngld5/image/upload/v1532544942/default_avatar.png"
+        }
+
+        cloudinary.v2.uploader.upload(img, (err, result) => {
+          if(err){
+            req.flash("error", err.message)
+            return res.redirect("back")
+          }
+          foundStudent.imageId = result.public_id;
+          foundStudent.image = result.secure_url;
+          foundStudent.save();
+          res.redirect("/student/" + req.params.id)
+        })
+      })
+    }
+  })
 })
 
 

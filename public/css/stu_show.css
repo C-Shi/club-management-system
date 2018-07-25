@@ -1,0 +1,5 @@
+.stat-li {
+  list-style: none; /* Remove list bullets */
+  padding-left: 10px;
+  margin: 0;
+}

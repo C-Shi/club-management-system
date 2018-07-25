@@ -5,26 +5,28 @@ var studentSchema = new mongoose.Schema({
     first: String,
     last: String,
   },
+  image: String,
+  imageId: String,
   fullName: String,
   school: String,
   grade: Number,
-  height: {
-    feet: Number,
-    inches: Number
-  },
-  weight: Number,
+  height: String,
+  weight: String,
   position: String,
-  armSpan: Number,
-  benchPress: Number,
-  broad: Number,
-  vertical: Number,
+  armSpan: String,
+  benchPress: {
+    first: String,
+    second: String
+  },
+  broad: String,
+  vertical: String,
   forty: {
-    first: Number,
-    second: Number
+    first: String,
+    second: String
   },
   shuttle: {
-    firstL: Number,
-    secondR: Number
+    firstL: String,
+    secondR: String
   },
   strength: String,
   weakness: String,
